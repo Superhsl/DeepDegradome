@@ -29,8 +29,9 @@ def Loader(mainPath0):
     
     # Check path configure file
     try:
-        if mainPath+'PathConfigure.log' in fileList:
-            with open(mainPath+'PathConfigure.log','r') as inf:
+        configPath = os.environ.get('EMOLFRAG_CONFIG', mainPath+'PathConfigure.log')
+        if os.path.isfile(configPath):
+            with open(configPath,'r') as inf:
                 tempList=inf.readlines()
                 if len(tempList)==2:
                     if os.path.exists(tempList[0].replace('\n','')):

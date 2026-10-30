@@ -1,0 +1,7 @@
+{
+  "upstream": "https://github.com/QiaoyuHu89/DeepDegradome",
+  "upstream_commit": "8b77f9897258064ef1d9a5ac4a42a547fb3eacea",
+  "local_branch": "adapt/sdaa",
+  "implementation_commit": null,
+  "publication_status": "Uncommitted working tree prepared for review; no push or format-patch implementation commit yet."
+}

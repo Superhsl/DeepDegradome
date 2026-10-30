@@ -55,11 +55,11 @@ system"rm temp*";
    	chomp($grd_content[14]);
    	$grd_content[14]=();
    	$grd_content[15]=();
-   	$grd_content[17]=();
+        $grd_content[17]=();
    	
    	$grd_content[14] = "receptor_file        ".$mol_name;
    	$grd_content[15] = "box_file       ".$ARGV[0].$vdw;
-   	$grd_content[17] = "score_grid_prefix        ".$ARGV[0]."_".$k;
+        $grd_content[17] = "score_grid_prefix        ".$ARGV[0]."_".$k."\n";
    	open(GRD,">grid.in")||die "can't open the out grdin_vdw file:$!";
     print GRD @grd_content;
     close(GRD);

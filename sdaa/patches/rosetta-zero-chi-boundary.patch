@@ -1,0 +1,14 @@
+--- a/src/core/pack/dunbrack/SingleResidueDunbrackLibrary.hh
++++ b/src/core/pack/dunbrack/SingleResidueDunbrackLibrary.hh
+@@ -314,6 +314,11 @@
+ 				return 1;
+ 			}
+ 		}
++
++		// Canonicalize sub-roundoff non-Pro chi to the existing exact-zero bin.
++		// Only the local classification angle changes; coordinates are untouched.
++		constexpr Real chi_zero_tolerance = 1e-10; // degrees
++		if ( std::abs( chi ) < chi_zero_tolerance ) { chi = 0.0; }
+ 
+ 		if ( ( chi >= 0.0 ) && ( chi <= 120.0 ) ) { return 1; }
+ 		else if ( std::abs(chi) >= 120.0 ) { return 2; }

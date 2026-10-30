@@ -1,0 +1,63 @@
+{
+  "runtime_image_id": "sha256:e7492c8146dd2012199b4e99d8c27ed0c03fea934feeef6f1c1caa45c1aca4f3",
+  "previous_runtime_image_id": "sha256:826ba47fb841c22b40030cbc52fcf377e9d4b08b5c664f5b855617dfc8ae2035",
+  "before_sha256": "b9a853a217bbc4b9090ec18538f5e9decbefab94216717cf3985d3a6bc13fccf",
+  "after_sha256": "c69c96fb1eb2dcf78ab12fdee44c61311a993ee5352cf2ef64c64d264e1a2d60",
+  "patch_sha256": "6c2d8c28261632686a627df624c94c7c0f5152178f9593cbfc618f2b81347e19",
+  "tolerance_degrees": 1e-10,
+  "scope": "non-Pro bin_rotameric_chi only",
+  "boundary_unit": {
+    "passed": true,
+    "nonpro_points": 100024,
+    "pro_cases_unchanged": 184,
+    "positive120_bin": 1,
+    "negative120_bin": 2,
+    "negative_tolerance_bin": 3,
+    "inside_negative_tolerance_bin": 1,
+    "compiler_flags": [
+      "-O3",
+      "-ffast-math",
+      "-fno-finite-math-only"
+    ],
+    "image_id": "sha256:4a525f89da01d9e27ad95920dab2fc4fd504843f85c7d6f1815a2a6356aa5561",
+    "source_sha256": "e6e9b82003ab5bee6444e74f92dcd74e6f1017f653bff729c3a2a615560a493d"
+  },
+  "runtime_files_manifest_sha256": "2d417844f4ab5625f694fddf15ffe56ce6315f167368ba5fca7efa4486311511",
+  "functional_smoke_cases": [
+    {
+      "pose": 4,
+      "seed": 1004,
+      "accepted": 1,
+      "failed_stage": null
+    },
+    {
+      "pose": 4,
+      "seed": 2004,
+      "accepted": 1,
+      "failed_stage": null
+    },
+    {
+      "pose": 5,
+      "seed": 1005,
+      "accepted": 1,
+      "failed_stage": null
+    },
+    {
+      "pose": 5,
+      "seed": 2005,
+      "accepted": 0,
+      "failed_stage": "dock_low"
+    }
+  ],
+  "note": "Known zero-bin discontinuity fixed; not a claim of full stochastic end-to-end equivalence.",
+  "paired_validation": {
+    "summary_sha256": "7185724e132f60aae528223a62d09e5630f242fb550a8d0cd442933979bcfad0",
+    "scope": "CPU Rosetta zero-only source patch; two poses and two seeds each; no end-to-end neural pipeline rerun",
+    "four_case_accept_failure_match": true,
+    "matched_packing_proposals": 152100,
+    "first_packing_accept_reject_difference": null,
+    "observer_outputs_equal_both": true,
+    "remaining_pd4_seed1004_best_fit_heavy_atom_rmsd_A": 1.3450357285056325,
+    "strict_full_protocol_equivalence": false
+  }
+}

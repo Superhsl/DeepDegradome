@@ -1,0 +1,29 @@
+# Local SDAA data, experiments and build products (upstream tracked assets are retained).
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.DS_Store
+sdaa/.local/
+sdaa/scripts/full_comparison/fixtures/
+sdaa/outputs/
+sdaa/cache/
+sdaa/dist/
+DEVELOP/data/linker_design/data_zinc_train.txt
+*.npz
+*.npy
+*.whl
+*.trace.json
+*.tar.gz
+*.zip
+
+# New model files and compiled artifacts remain external; upstream tracked files are retained.
+*.pt
+*.pth
+*.pickle
+*.pkl
+*.o
+*.a
+*.so
+sdaa/patches/working-tree.patch
+sdaa/patches/working-tree.sha256

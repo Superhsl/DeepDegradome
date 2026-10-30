@@ -1,0 +1,8 @@
+ARG VALIDATED_RUNTIME=sha256:a4c8e0c7e7fb1edb3791f2763154454dcdd181f2b4b52bafb9087644539489f0
+FROM ${VALIDATED_RUNTIME}
+COPY install/chimera/ /opt/deepdegradome/chimera/
+ENV CHIMERA=/opt/deepdegradome/chimera \
+    chimera=/opt/deepdegradome/chimera/bin \
+    PATH=/opt/deepdegradome/chimera/bin:$PATH
+# Python 2 and its libraries are set only by the Chimera child launcher.
+# The inherited Python 3.12 / torch-sdaa environment remains unchanged.

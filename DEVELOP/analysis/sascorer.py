@@ -21,7 +21,8 @@ from rdkit import Chem
 from rdkit.Chem import rdMolDescriptors
 #from rdkit.six.moves import cPickle
 import pickle
-from rdkit.six import iteritems
+def iteritems(mapping):
+  return iter(mapping.items())
 
 import math
 from collections import defaultdict

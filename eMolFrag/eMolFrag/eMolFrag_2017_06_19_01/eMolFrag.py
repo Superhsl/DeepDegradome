@@ -896,7 +896,7 @@ def GetFileList(path):
         filePathList = []
         try:
             for root, dirs, files in os.walk(path):
-                for file in files:
+                for file in sorted(files):
                     fileNameList.append(file)
                     filePathList.append(path+file)
             return [filePathList, fileNameList]
@@ -917,7 +917,7 @@ def GetInputList(inputFolderPath, outputFolderPath_log):
 
         try:
             for root, dirs, files in os.walk(inputFolderPath):
-                for file in files:
+                for file in sorted(files):
                     fileNameList.append(file)
                     infilePathList.append(inputFolderPath+file+'\n')
         except:
@@ -971,7 +971,7 @@ def Chop(outputPathList, pool):
 
     try:
         partial_Chop=partial(ChopWithRDKit, outputDir)
-        pool.map(partial_Chop,inputlist)
+        pool.map(partial_Chop,inputList)
     except Exception as err:
         print('Error Code: 1092.')
         return
@@ -1002,7 +1002,7 @@ def RmBrickRedundancy(outputPathList, tcBorder, pool):
     fileNameAndAtomNumList_R=[]
     try:
         with open(outputFolderPath_log+'BrickListAll.txt','r') as inList:
-            fileNameAndAtomNumList_R=inList.readlines()
+            fileNameAndAtomNumList_R=sorted(inList.readlines())
     except:
         print('Error Code: 1100.')
         return
@@ -1094,7 +1094,7 @@ def RmLinkerRedundancy(outputPathList, pool):
     fileNameAndAtomNumList_L=[]
     try:
         with open(outputFolderPath_log+'LinkerListAll.txt','r') as inList:
-            fileNameAndAtomNumList_L=inList.readlines()
+            fileNameAndAtomNumList_L=sorted(inList.readlines())
     except:
         print('Error Code: 1110. Read LinkerListAll.txt failed. This may be caused from no linker generated for some reason.')
         return

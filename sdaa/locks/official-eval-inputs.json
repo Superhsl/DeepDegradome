@@ -1,0 +1,48 @@
+{
+  "repository": "https://github.com/Fenglei104/DeepPROTACs",
+  "commit": "dfb62c4d137b7133d5ea4834a2615779630f2a52",
+  "files": [
+    {
+      "path": "assets/DeepPROTACs-official-single-test/LICENSE",
+      "bytes": 35149,
+      "sha256": "3972dc9744f6499f0f9b2dbf76696f2ae7ad8af9b23dde66d6af86c9dfb36986",
+      "source": "https://github.com/Fenglei104/DeepPROTACs/blob/dfb62c4d137b7133d5ea4834a2615779630f2a52/LICENSE"
+    },
+    {
+      "path": "assets/DeepPROTACs-official-single-test/README.md",
+      "bytes": 2554,
+      "sha256": "4052da308a9a25821e35b2f650a4ccc5d63f3d102d13c42cb14997b7ae845681",
+      "source": "https://github.com/Fenglei104/DeepPROTACs/blob/dfb62c4d137b7133d5ea4834a2615779630f2a52/README.md"
+    },
+    {
+      "path": "assets/DeepPROTACs-official-single-test/single_test/ligase_ligand.mol2",
+      "bytes": 3602,
+      "sha256": "f051aed354bc59c04a804157d372952d7ece33fe4ea15e12dcf0c6aa128e00d8",
+      "source": "https://github.com/Fenglei104/DeepPROTACs/blob/dfb62c4d137b7133d5ea4834a2615779630f2a52/single_test/ligase_ligand.mol2"
+    },
+    {
+      "path": "assets/DeepPROTACs-official-single-test/single_test/ligase_pocket.mol2",
+      "bytes": 18019,
+      "sha256": "ff7f1d30c6584466f329ba3459b4c996d709e50f825589d56bc2a71756a7e6f8",
+      "source": "https://github.com/Fenglei104/DeepPROTACs/blob/dfb62c4d137b7133d5ea4834a2615779630f2a52/single_test/ligase_pocket.mol2"
+    },
+    {
+      "path": "assets/DeepPROTACs-official-single-test/single_test/linker.smi",
+      "bytes": 13,
+      "sha256": "2b5ba3fca212762cc2dc02d5145c0236a6e68601cfeccd643e8477d3d8bdaf6b",
+      "source": "https://github.com/Fenglei104/DeepPROTACs/blob/dfb62c4d137b7133d5ea4834a2615779630f2a52/single_test/linker.smi"
+    },
+    {
+      "path": "assets/DeepPROTACs-official-single-test/single_test/target_ligand.mol2",
+      "bytes": 3170,
+      "sha256": "a2a4e13e8c27d083382dcaced5ee52471d0b47f7abb26551c857ed3625ae3769",
+      "source": "https://github.com/Fenglei104/DeepPROTACs/blob/dfb62c4d137b7133d5ea4834a2615779630f2a52/single_test/target_ligand.mol2"
+    },
+    {
+      "path": "assets/DeepPROTACs-official-single-test/single_test/target_pocket.mol2",
+      "bytes": 22380,
+      "sha256": "01366d54e41082a8f194cb2e9272e57293d613d0c9f3033442832d536e2fe49e",
+      "source": "https://github.com/Fenglei104/DeepPROTACs/blob/dfb62c4d137b7133d5ea4834a2615779630f2a52/single_test/target_pocket.mol2"
+    }
+  ]
+}

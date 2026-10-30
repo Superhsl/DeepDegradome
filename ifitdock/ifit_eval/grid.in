@@ -16,3 +16,4 @@ receptor_file        WDR5.mol2
 box_file       WDR5_grid_vdw_box_1.pdb
 vdw_definition_file           vdw_AMBER_parm99.defn
 score_grid_prefix        WDR5_1
+allow_non_integral_charges yes

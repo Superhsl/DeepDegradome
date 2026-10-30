@@ -1,0 +1,7 @@
+ARG BASE_IMAGE=sha256:3e425da47a74a03b589f8e1c18a67dcb90c8bcbde977cc1df09fa01209b7a524
+FROM ${BASE_IMAGE}
+USER root
+# The Python wheel needs these native libraries even for headless PyMOL operations.
+RUN dnf install -y libGLEW-2.2.0-7.lns23 libglvnd-glx-1.6.0-3.lns23 \
+    && dnf clean all
+ENV PYTHONDONTWRITEBYTECODE=1 HOME=/tmp

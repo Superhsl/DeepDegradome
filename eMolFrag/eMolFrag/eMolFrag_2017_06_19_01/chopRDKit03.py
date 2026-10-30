@@ -393,6 +393,11 @@ def ChopWithRDKit(outputDir,inputPath):
     l=0
     r=0
     for m in mfl2:
+        # The original text parser below recognizes dummy atoms as R.
+        # RDKit releases differ in the default dummy-label serialization.
+        for atom in m.GetAtoms():
+            if atom.GetAtomicNum() == 0:
+                atom.SetProp('dummyLabel', 'R')
         carbonC=0
         nitrogC=0
         oxygenC=0
@@ -507,6 +512,12 @@ def ChopWithRDKit(outputDir,inputPath):
                         hydrAtomLineList.append(atomLine)
 
                 newBrickInfoList=brickInfoList[:brickMolEndList[0]]
+                # New RDKit writes V atom-value records for dummy labels.
+                # These records must disappear with their deleted atoms.
+                removedAtomIndices = set(dummyAtomList + hydrAtomList)
+                newBrickInfoList = [line for line in newBrickInfoList
+                                    if not (line.startswith('V  ') and
+                                            int(line[3:6])-1 in removedAtomIndices)]
 
                 #Branch, eligible to connect
 
@@ -677,6 +688,12 @@ def ChopWithRDKit(outputDir,inputPath):
                         hydrAtomLineList.append(atomLine)
 
                 newLinkerInfoList=linkerInfoList[:linkerMolEndList[0]]
+                # New RDKit writes V atom-value records for dummy labels.
+                # These records must disappear with their deleted atoms.
+                removedAtomIndices = set(dummyAtomList + hydrAtomList)
+                newLinkerInfoList = [line for line in newLinkerInfoList
+                                    if not (line.startswith('V  ') and
+                                            int(line[3:6])-1 in removedAtomIndices)]
 
                 #Branch, eligible to connect
 

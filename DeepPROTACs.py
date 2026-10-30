@@ -11,15 +11,17 @@ import glob
 import json
 import shutil
 import argparse
-from pymol import cmd
 from rdkit import Chem
 from rdkit.Chem import Descriptors
 from multiprocessing import Pool
+from rdkit.Chem import RDConfig
+sys.path.append(os.path.join(RDConfig.RDContribDir, 'SA_Score'))
 from frag_utils import get_linker, remove_dummys
 
 
 # obtain the surrounding environment of a ligand
 def obtain_surround(ligand, protein):
+    from pymol import cmd
     if cmd._COb is None:
         import pymol2
         import pymol.invocation

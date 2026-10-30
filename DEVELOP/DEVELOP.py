@@ -15,11 +15,20 @@ Options:
     --restrict_data INT      Limit data
     --out_name NAME          Name of output
 """
+
+from pathlib import Path
+import sys
+SOURCE_ROOT = next(p for p in [*Path(__file__).resolve().parents, Path('/source')] if (p/'DEVELOP').is_dir() and (p/'sdaa').is_dir())
+sys.path.insert(0, str(SOURCE_ROOT))
 from typing import Sequence, Any
-from docopt import docopt
 from collections import defaultdict, deque
 import numpy as np
-import tensorflow as tf
+try:
+    import tensorflow as tf
+except ModuleNotFoundError as exc:
+    if exc.name != "tensorflow":
+        raise
+    tf = None
 import sys, traceback
 import pdb
 import json
@@ -35,7 +44,12 @@ from copy import deepcopy
 import os
 import time
 from data_augmentation import *
-import molgrid
+try:
+    import molgrid
+except ModuleNotFoundError as exc:
+    if exc.name != "molgrid":
+        raise
+    molgrid = None
 
 '''
 Comments provide the expected tensor shapes where helpful.
@@ -1126,6 +1140,9 @@ class DenseGGNNChemModel(ChemModel):
         return maximum_length
 
     def generate_new_graphs(self, data, struct_data):
+        if self.args.get("--torch-device"):
+            from sdaa.runtime.torch_session import generate_from_structures
+            return generate_from_structures(self, data, struct_data)
         # Prepare data
         # bucketed: data organized by bucket
         (bucketed, bucket_sizes, bucket_at_step) = data
@@ -1257,6 +1274,7 @@ class DenseGGNNChemModel(ChemModel):
 
 
 if __name__ == "__main__":
+    from docopt import docopt
     args = docopt(__doc__)
     dataset=args.get('--dataset')
     try:

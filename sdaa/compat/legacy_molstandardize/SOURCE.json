@@ -1,0 +1,6 @@
+{
+  "origin": "RDKit 2021.09.4 MolStandardize Python package from fixed x86 reproduction image",
+  "image": "sha256:71e9f83f87a749592ca628a6e1460000350a29660521bb2e8bab3d6a3347dcaf",
+  "archive_sha256": "9f8fbd6b5c49218e6a207d72c20a6ec330f74036587948336224c55a31fac435",
+  "scope": "Retain original Python standardization and tautomer rules; execute against native RDKit. 100 fixed linker controls matched canonical forms and SA scores."
+}

@@ -1,5 +1,6 @@
 import torch
 import os
+from pathlib import Path
 from rdkit import Chem
 from torch_geometric.data import Batch
 from prepare_data import mol2graph, trans_smiles, PROTEIN_ATOM_TYPE, LIGAND_ATOM_TYPE
@@ -51,16 +52,17 @@ def mol2graph(path, ATOM_TYPE):
     return graph
 
 class GraphData(InMemoryDataset):
-    def __init__(self, name, root="data"):
+    def __init__(self, name, root="data", raw_path=None):
+        self.raw_path = raw_path
         super().__init__(root)
         if name == "ligase_ligand":
-            self.data, self.slices = torch.load(self.processed_paths[0])
+            self.data, self.slices = torch.load(self.processed_paths[0], weights_only=False)
         elif name == "ligase_pocket":
-            self.data, self.slices = torch.load(self.processed_paths[1])
+            self.data, self.slices = torch.load(self.processed_paths[1], weights_only=False)
         elif name == "target_ligand":
-            self.data, self.slices = torch.load(self.processed_paths[2])
+            self.data, self.slices = torch.load(self.processed_paths[2], weights_only=False)
         elif name == "target_pocket":
-            self.data, self.slices = torch.load(self.processed_paths[3])
+            self.data, self.slices = torch.load(self.processed_paths[3], weights_only=False)
 
     @property
     def processed_file_names(self):
@@ -72,27 +74,27 @@ class GraphData(InMemoryDataset):
                 ]
 
     def process(self):
-        graph = mol2graph(path + "/ligase_ligand.mol2", LIGAND_ATOM_TYPE)
+        graph = mol2graph(self.raw_path + "/ligase_ligand.mol2", LIGAND_ATOM_TYPE)
         ligase_ligand = [graph]
         data, slices = self.collate(ligase_ligand)
         torch.save((data, slices), self.processed_paths[0])
 
-        graph = mol2graph(path + "/ligase_pocket.mol2", PROTEIN_ATOM_TYPE)
+        graph = mol2graph(self.raw_path + "/ligase_pocket.mol2", PROTEIN_ATOM_TYPE)
         ligase_pocket = [graph]
         data, slices = self.collate(ligase_pocket)
         torch.save((data, slices), self.processed_paths[1])
 
-        graph = mol2graph(path + "/target_ligand.mol2", LIGAND_ATOM_TYPE)
+        graph = mol2graph(self.raw_path + "/target_ligand.mol2", LIGAND_ATOM_TYPE)
         target_ligand = [graph]
         data, slices = self.collate(target_ligand)
         torch.save((data, slices), self.processed_paths[2])
 
-        graph = mol2graph(path + "/target_pocket.mol2", PROTEIN_ATOM_TYPE)
+        graph = mol2graph(self.raw_path + "/target_pocket.mol2", PROTEIN_ATOM_TYPE)
         target_pocket = [graph]
         data, slices = self.collate(target_pocket)
         torch.save((data, slices), self.processed_paths[3])
 
-        with open(path + "/linker.smi") as f:
+        with open(self.raw_path + "/linker.smi") as f:
             smi = f.read()
         smi = Chem.MolToSmiles(Chem.MolFromSmiles(smi))
         smiles = [trans_smiles(smi.strip())]
@@ -138,17 +140,26 @@ class PROTACSet(Dataset):
         }
         return sample
 
-def inference(path):
-    os.system(f"babel {path}/ligase_ligand.mol2 {path}/ligase_ligand.mol2 >/dev/null 2>&1")
-    os.system(f"babel {path}/ligase_pocket.mol2 {path}/ligase_pocket.mol2 >/dev/null 2>&1")
-    os.system(f"babel {path}/target_ligand.mol2 {path}/target_ligand.mol2 >/dev/null 2>&1")
-    os.system(f"babel {path}/target_pocket.mol2 {path}/target_pocket.mol2 >/dev/null 2>&1")
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+@torch.inference_mode()
+def inference(path, device_name=None, prepared_mol2=False):
+    if not prepared_mol2:
+        import shutil
+        if shutil.which("babel") is None:
+            raise RuntimeError("babel executable missing; prepared MOL2 inputs can use --prepared-mol2")
+        for name in ["ligase_ligand", "ligase_pocket", "target_ligand", "target_pocket"]:
+            import subprocess
+            subprocess.run(["babel", str(Path(path)/(name+".mol2")), str(Path(path)/(name+".mol2"))], check=True)
+    device_name = device_name or os.environ.get("DEEPDEGRADOME_DEVICE") or ("cuda" if torch.cuda.is_available() else "cpu")
+    if device_name.startswith("sdaa"):
+        import torch_sdaa
+        if not torch.sdaa.is_available():
+            raise RuntimeError("SDAA device unavailable")
+    device = torch.device(device_name)
     root = f"{path}/data"
-    ligase_ligand = GraphData("ligase_ligand", root)
-    ligase_pocket = GraphData("ligase_pocket", root)
-    target_ligand = GraphData("target_ligand", root)
-    target_pocket = GraphData("target_pocket", root)
+    ligase_ligand = GraphData("ligase_ligand", root, raw_path=path)
+    ligase_pocket = GraphData("ligase_pocket", root, raw_path=path)
+    target_ligand = GraphData("target_ligand", root, raw_path=path)
+    target_pocket = GraphData("target_pocket", root, raw_path=path)
     with open(os.path.join(target_pocket.processed_dir, "smiles.pkl"),"rb") as f:
         smiles = pickle.load(f)
 
@@ -175,9 +186,12 @@ def inference(path):
     smiles_model,
     )
 
+    model = model.to(device)
+    model.eval()
+
     sum = 0
     for i in range(1,11):
-        model.load_state_dict(torch.load('model_' + str(i) + '.pth', map_location='cpu'))
+        model.load_state_dict(torch.load(Path(__file__).with_name('model_' + str(i) + '.pth'), map_location='cpu', weights_only=False))
         for data_sample in testloader:
             outputs = model(data_sample['ligase_ligand'].to(device),
                                     data_sample['ligase_pocket'].to(device),
@@ -198,11 +212,13 @@ if __name__ == "__main__":
     # Usage: python deepprotacs.py -p path
     parser = argparse.ArgumentParser(description='Pass parameters!')
     parser.add_argument('-p', type=str, help='data path')
+    parser.add_argument('--device', choices=['cpu', 'cuda', 'sdaa'])
+    parser.add_argument('--prepared-mol2', action='store_true')
     args = parser.parse_args()
 
     path = args.p
 
-    percent = inference(path)
+    percent = inference(path, args.device, args.prepared_mol2)
     print(percent)
     with open('result.txt', 'w') as fw:
         fw.write(str(percent))

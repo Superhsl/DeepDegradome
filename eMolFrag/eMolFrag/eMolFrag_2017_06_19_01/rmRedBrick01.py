@@ -12,7 +12,7 @@ import time
 def RmBrickRed(outputPath, tcBorder, inputList):
     #print(len(inputList))
     pathList=[]
-    with open('PathConfigure.log','r') as inf:
+    with open(os.environ.get('EMOLFRAG_CONFIG', 'PathConfigure.log'),'r') as inf:
         tempList=inf.readlines()
         if len(tempList)==2:
             pathList.append(tempList[0].replace('\n',''))

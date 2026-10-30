@@ -1,6 +1,11 @@
 #!/usr/bin/env/python
 import numpy as np
-import tensorflow as tf
+try:
+    import tensorflow as tf
+except ModuleNotFoundError as exc:
+    if exc.name != "tensorflow":
+        raise
+    tf = None
 import queue
 import threading
 import pickle

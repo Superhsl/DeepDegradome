@@ -29,7 +29,7 @@ import sascorer
 from data.prepare_data_linker_design import read_file_edit, preprocess
 from data_pre_for_linking import obtain_dummy, cal_dummy_dist, cal_dis_ang, obtain_linker_pharma
 from brick_linking import linking_bricks
-from assess_linking import delete_du, assess_mols_RMSD, assess_mols_pharm, extract_sdf
+from assess_linking_mols import delete_du, assess_mols_RMSD, assess_mols_pharm, extract_sdf
 
 
 # Delete hydrogens of brick mol2 file and save as sdf file
@@ -369,7 +369,7 @@ def generate_linker(results_list, warhead, E3_ligand, warhead_anchor_id, ligand_
         if min_dist >= 2.0:
             try:
                 os.system('cp ' + DeepDegradome_FOL +'/DEVELOP/models/linker_design/pretrained_DEVELOP_model.pickle .')
-                data_path, frag_sdf = cal_dis_ang(new_warhead, new_E3_ligand, new_warhead_anchor_id, new_ligand_anchor_id, folder)
+                data_path, frag_sdf, _ = cal_dis_ang(new_warhead, new_E3_ligand, new_warhead_anchor_id, new_ligand_anchor_id, folder)
                 linker_pharma_sdf = folder + '_linker_pharma.sdf'
                 pharm_count = obtain_linker_pharma(du_surround_mol, frag_sdf, linker_pharma_sdf)
                 types = folder + '.types'
@@ -400,7 +400,7 @@ def generate_linker(results_list, warhead, E3_ligand, warhead_anchor_id, ligand_
             except Exception as e:
                 os.system('rm ' + folder + '_sc*')
                 os.system('rm ' + folder + '_bb*')
-                folder_log.write(e + '\n')
+                folder_log.write(str(e) + '\n')
                 folder_log.write(folder + ' is discarded due to errors in data preparation process of linking.\n')
                 print(folder + ' is discarded due to errors in data preparation process of linking.')
                 folder_log.close()

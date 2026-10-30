@@ -1,0 +1,20 @@
+{
+  "pymol": {
+    "filename": "pymol-f51e58f6.tar.gz",
+    "url": "https://codeload.github.com/schrodinger/pymol-open-source/tar.gz/f51e58f6b08308c41c85b9d12a23231f49ca325a",
+    "commit": "f51e58f6b08308c41c85b9d12a23231f49ca325a",
+    "sha256": "2ce9841cfe9c62940701b40639da20180974be1291d399803a702d1711ad1a91"
+  },
+  "docopt": {
+    "filename": "docopt-0.6.2.tar.gz",
+    "url": "https://files.pythonhosted.org/packages/a2/55/8f8cab2afd404cf578136ef2cc5dfb50baa1761b68c9da1fb1e4eed343c9/docopt-0.6.2.tar.gz",
+    "version": "0.6.2",
+    "sha256": "49b3a825280bd66b3aa83585ef59c4a8c82f2c8a522dbe754a8bc8d08c85c491"
+  },
+  "glm": {
+    "filename": "glm-0.9.9.8.tar.gz",
+    "url": "https://codeload.github.com/g-truc/glm/tar.gz/bf71a834948186f4097caa076cd2663c69a10e1e",
+    "commit": "bf71a834948186f4097caa076cd2663c69a10e1e",
+    "sha256": "70ad78e872c145f0164d54da833b651914c184edc65958906937b9739fb8fb1b"
+  }
+}

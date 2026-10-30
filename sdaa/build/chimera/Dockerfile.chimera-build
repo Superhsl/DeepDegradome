@@ -1,0 +1,8 @@
+ARG NATIVE_BUILD_IMAGE=sha256:4a525f89da01d9e27ad95920dab2fc4fd504843f85c7d6f1815a2a6356aa5561
+FROM ${NATIVE_BUILD_IMAGE}
+USER root
+RUN dnf install -y rsync bison flex autoconf automake readline-devel \
+      pcre-devel ftgl-devel mesa-libOSMesa-devel tcl-devel tk-devel \
+    && dnf clean all
+ENV OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 PYTHONDONTWRITEBYTECODE=1
+ENTRYPOINT ["bash"]

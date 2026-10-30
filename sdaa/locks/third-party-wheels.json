@@ -1,0 +1,81 @@
+{
+  "base_image_id": "sha256:3e425da47a74a03b589f8e1c18a67dcb90c8bcbde977cc1df09fa01209b7a524",
+  "build_image_id": "sha256:4a525f89da01d9e27ad95920dab2fc4fd504843f85c7d6f1815a2a6356aa5561",
+  "validation_image_id": "sha256:73a58dce793e09584ad8184c53995c2fb27a07581c46c1cda6fc67f535b75d34",
+  "architecture": "loongarch64",
+  "sources": {
+    "pymol": {
+      "filename": "pymol-f51e58f6.tar.gz",
+      "url": "https://codeload.github.com/schrodinger/pymol-open-source/tar.gz/f51e58f6b08308c41c85b9d12a23231f49ca325a",
+      "commit": "f51e58f6b08308c41c85b9d12a23231f49ca325a",
+      "sha256": "2ce9841cfe9c62940701b40639da20180974be1291d399803a702d1711ad1a91"
+    },
+    "docopt": {
+      "filename": "docopt-0.6.2.tar.gz",
+      "url": "https://files.pythonhosted.org/packages/a2/55/8f8cab2afd404cf578136ef2cc5dfb50baa1761b68c9da1fb1e4eed343c9/docopt-0.6.2.tar.gz",
+      "version": "0.6.2",
+      "sha256": "49b3a825280bd66b3aa83585ef59c4a8c82f2c8a522dbe754a8bc8d08c85c491"
+    },
+    "glm": {
+      "filename": "glm-0.9.9.8.tar.gz",
+      "url": "https://codeload.github.com/g-truc/glm/tar.gz/bf71a834948186f4097caa076cd2663c69a10e1e",
+      "commit": "bf71a834948186f4097caa076cd2663c69a10e1e",
+      "sha256": "70ad78e872c145f0164d54da833b651914c184edc65958906937b9739fb8fb1b"
+    }
+  },
+  "wheels": [
+    {
+      "name": "docopt",
+      "version": "0.6.2",
+      "filename": "docopt-0.6.2-py2.py3-none-any.whl",
+      "bytes": 13781,
+      "sha256": "36828f075312d6c8123875b62fdc361c1059d766a72d96d2f28551c687e002db",
+      "tags": [
+        "py2-none-any",
+        "py3-none-any"
+      ],
+      "license_files": [
+        "docopt-0.6.2.dist-info/licenses/LICENSE-MIT"
+      ],
+      "elf_extensions": []
+    },
+    {
+      "name": "pymol",
+      "version": "3.1.0",
+      "filename": "pymol-3.1.0-cp312-cp312-linux_loongarch64.whl",
+      "bytes": 7496269,
+      "sha256": "54d25f26933d5a96f1943cc409af12976fd9d65206666463f90c5fadd6e4e08f",
+      "tags": [
+        "cp312-cp312-linux_loongarch64"
+      ],
+      "license_files": [
+        "pymol-3.1.0.dist-info/licenses/AUTHORS",
+        "pymol-3.1.0.dist-info/licenses/LICENSE",
+        "pymol-3.1.0.dist-info/licenses/LICENSE-GLM.txt"
+      ],
+      "elf_extensions": [
+        "chempy/champ/_champ.cpython-312-loongarch64-linux-gnu.so",
+        "pymol/_cmd.cpython-312-loongarch64-linux-gnu.so"
+      ]
+    }
+  ],
+  "validation_passed": true,
+  "validation_report": "validation.json",
+  "system_runtime_requirements": [
+    "libGLEW-2.2.0-7.lns23",
+    "libglvnd-glx-1.6.0-3.lns23"
+  ],
+  "scope": "Additional Python wheels over the pinned base image; not a complete CPU tool distribution.",
+  "installation_validation_report": "installation-validation.json",
+  "delivery_scripts_sha256": {
+    "build_wheels.py": "83fe51d4bd6faeba2a175142b2e682338bfcd59055469ac395b2984ead3c6d40",
+    "Dockerfile.runtime-deps": "29aedbbb26fb6e1363974a365d5e092835b672f1e2a8c889539037e65998c1c6",
+    "sources.json": "52bb8d675dfebd9d036759371c5487ff3874681040a47cdfe8185c814516ccc5",
+    "verify_installed.py": "0c2508af6e6698ba6957081b9a2a9c3b1b70bc601ca34169026c167625e76343",
+    "install_wheels.py": "3cf444a89be339015b513025b1c1454fd5bfbf6c2ba8596a06d4b296e466bdf2"
+  },
+  "base_package_scope": "Only pymol and docopt are added over the pinned base. All other model Python dependencies remain supplied by that base image.",
+  "artifact_directory": "deliverables/python-wheels-20261026-01",
+  "publication_status": "Built and locally verified; no package repository commit or upload",
+  "local_wheel_directory": "sdaa/vendor"
+}

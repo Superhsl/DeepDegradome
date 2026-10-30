@@ -1,0 +1,14 @@
+ARG BASE_IMAGE=sha256:3e425da47a74a03b589f8e1c18a67dcb90c8bcbde977cc1df09fa01209b7a524
+FROM ${BASE_IMAGE}
+
+# Native LoongArch compiler environment, isolated from the host and other projects.
+USER root
+RUN dnf install -y glew-devel freeglut-devel libpng-devel \
+      freetype-devel libxml2-devel zlib-devel \
+    && dnf clean all
+
+ENV OMP_NUM_THREADS=1 \
+    OPENBLAS_NUM_THREADS=1 \
+    MKL_NUM_THREADS=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    TORCH_SDAA_CONV_USE_FP32=0

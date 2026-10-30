@@ -1,0 +1,9 @@
+ARG PARENT_RUNTIME=sha256:19a1d2509832b22b2256cd57bb86027bcf4a5f14c942a5136f30e549f9359cef
+FROM ${PARENT_RUNTIME}
+ARG RUNTIME_USER=0
+USER 0
+COPY apply_determinism.py chimera-determinism.patch /opt/deepdegradome/chimera-determinism/
+RUN python3.12 /opt/deepdegradome/chimera-determinism/apply_determinism.py \
+    --share /opt/deepdegradome/chimera/share \
+    --patch /opt/deepdegradome/chimera-determinism/chimera-determinism.patch
+USER ${RUNTIME_USER}

@@ -1,0 +1,8 @@
+{
+  "receptor.pdb": "c0d65ba7c7681686d99e3aa4342ed00fa6a11bca4d30a37da27c0e028431234f",
+  "pd.10_docking_0002_frag.sdf": "d6c9b7f93f1b9d716676d52f6d237203e1dffaeb29f48459ed28f239525db40f",
+  "pd.10_docking_0002.types": "9b2d6dcd21679da647ce6cec00571bcc76b902c10b4c67accad83a455f5686e1",
+  "fragments.sdf": "c327b1c616568d5f7cad6a4e7eec690ae34bd096733a6c1ae518432673b7e043",
+  "pd.10_docking_0002_linker_pharma.sdf": "2f5950577894aa6da32738b3323a1307fb3936eadb4815eeef08bab566142316",
+  "molecules_pd.10_docking_0002_out.json": "13b0a9646c8e298ac69053e633eaff217d34cd2f2c3dec30c9c77c2bd3744a27"
+}

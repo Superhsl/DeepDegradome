@@ -1,7 +1,17 @@
+
+from pathlib import Path
+import sys
+SOURCE_ROOT = next(p for p in [*Path(__file__).resolve().parents, Path('/source')] if (p/'DEVELOP').is_dir() and (p/'sdaa').is_dir())
+sys.path.insert(0, str(SOURCE_ROOT))
 #!/usr/bin/env/python
 
 from typing import Tuple, List, Any, Sequence
-import tensorflow as tf
+try:
+    import tensorflow as tf
+except ModuleNotFoundError as exc:
+    if exc.name != "tensorflow":
+        raise
+    tf = None
 import time
 import os
 import json
@@ -13,7 +23,12 @@ from utils import dataset_info, ThreadedIterator, graph_to_adj_mat, SMALL_NUMBER
 from collections import defaultdict
 
 import sys
-import molgrid
+try:
+    import molgrid
+except ModuleNotFoundError as exc:
+    if exc.name != "molgrid":
+        raise
+    molgrid = None
 
 class ChemModel(object):
     @classmethod
@@ -23,6 +38,12 @@ class ChemModel(object):
         }
 
     def __init__(self, args):
+        # Original pipeline wrappers construct this dictionary themselves.
+        # An explicit environment setting selects the same inference backend
+        # used by the standalone CLI; an unset variable keeps legacy behavior.
+        if not args.get('--torch-device') and os.environ.get('DEEPDEGRADOME_DEVICE'):
+            args = dict(args)
+            args['--torch-device'] = os.environ['DEEPDEGRADOME_DEVICE']
         self.args = args
 
         # Collect argument things:
@@ -71,6 +92,13 @@ class ChemModel(object):
         # Structural data:
         self.train_struct_data = self.load_structural_data(params['train_struct_file'])
         self.valid_struct_data = self.load_structural_data(params['valid_struct_file'])
+
+        if args.get("--torch-device"):
+            from sdaa.runtime.torch_session import initialize
+            initialize(self, args)
+            return
+        if tf is None:
+            raise RuntimeError("TensorFlow 1 is required unless --torch-device is set")
 
         # Build the actual model
         config = tf.ConfigProto()

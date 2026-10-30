@@ -1,3 +1,8 @@
+
+from pathlib import Path
+import sys
+SOURCE_ROOT = next(p for p in [*Path(__file__).resolve().parents, Path('/source')] if (p/'DEVELOP').is_dir() and (p/'sdaa').is_dir())
+sys.path.insert(0, str(SOURCE_ROOT))
 #!/usr/bin/env python
 
 # # Analysis script
@@ -25,7 +30,7 @@ from collections import Counter
 import rdkit
 from rdkit import Chem
 from rdkit.Chem import AllChem
-from rdkit.Chem import MolStandardize
+from sdaa.compat import legacy_molstandardize as MolStandardize
 from rdkit.Chem import rdMolAlign
 from rdkit.Chem import Descriptors
 from rdkit.Chem import ChemicalFeatures
@@ -245,6 +250,12 @@ if verbose:
     print("Number of valid SMILES: \t%d" % len(results))
     print("%% Valid: \t\t\t%.2f%%" % (len(results)/len(generated_smiles)*100))
 
+if not results:
+    with open(save_path+version+"/filter-status.json", "w") as status:
+        json.dump({"status": "no_eligible_molecules_before_2d", "passing": 0}, status)
+    print("No molecules satisfy the original validity or pharmacophore requirements.")
+    sys.exit(0)
+
 # Prepare training set database
 
 # Load ZINC training set
@@ -329,6 +340,12 @@ if len(results) > 0:
     # with open('unlabeled_smiles.smi', 'w') as fw:
     #     for i in results_filt:
     #         fw.write(i[2] + '\n')
+
+    if not results_filt:
+        with open(save_path+version+"/filter-status.json", "w") as status:
+            json.dump({"status": "no_candidates_after_2d_filters", "passing": 0}, status)
+        print("No molecules passed the unchanged 2D filters; no 3D candidates.")
+        sys.exit(0)
 
     # Generate conformers
     _ = rdkit_conf_parallel.gen_confs([res[2] for res in results_filt], save_path+version+"/generated_mols.sdf", 
@@ -441,7 +458,7 @@ if len(results) > 0:
                 names_full.append(gen_sdfs[start].GetProp("_Name"))
                 names_start_pts_full.append(gen_sdfs[start].GetProp("_StartingPoint"))
                 best_scores_full.append(max(scores))
-                idx_best_poses_full.append((np.argmax(scores)+start, 0))
+                idx_best_poses_full.append((int(np.argmax(scores)+start), 0))
 
     # Save output
     np.save(save_path+version+"/names_full_"+version, names_full)
@@ -491,7 +508,7 @@ if len(results) > 0:
                 names_frags.append(gen_sdfs[start].GetProp("_Name"))
                 names_frags_start_pts.append(gen_sdfs[start].GetProp("_StartingPoint"))
                 best_scores_frags.append(max(scores))
-                idx_best_poses_frags.append((np.argmax(scores)+start, 0))
+                idx_best_poses_frags.append((int(np.argmax(scores)+start), 0))
                 
     # Save output
     np.save(save_path+version+"/names_frags_"+version, names_frags)
@@ -541,7 +558,7 @@ if len(results) > 0:
                 names_rmsd_frags.append(gen_sdfs[start].GetProp("_Name"))
                 names_rmsd_frags_start_pts.append(gen_sdfs[start].GetProp("_StartingPoint"))
                 best_rmsd_frags.append(min(scores))
-                idx_best_rmsd_poses_frags.append((np.argmin(scores)+start, 0))
+                idx_best_rmsd_poses_frags.append((int(np.argmin(scores)+start), 0))
 
     # Save output
     np.save(save_path+version+"/names_rmsd_frags_"+version, names_rmsd_frags)

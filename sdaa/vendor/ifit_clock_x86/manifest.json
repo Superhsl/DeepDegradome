@@ -1,0 +1,19 @@
+{
+  "kind": "diagnostic_time_seed_control_for_x86_ifit_only",
+  "target_architecture": "x86_64",
+  "not_a_python_wheel": true,
+  "source": "Adaptation diagnostic helper source and tested library, originally work/binary-translation-20261022-01/assets/clock",
+  "epoch": 1700000123,
+  "overridden_function": "time(time_t*); monotonic timer not overridden",
+  "use": "Preloaded only in the x86 iFit child, via LATX -E on loong; not a native Loong Python library",
+  "files": {
+    "fixedtime.c": {
+      "bytes": 425,
+      "sha256": "90c69e791363ce3560a32f24486066a289eeeb93bf75f432433879f543ec3e40"
+    },
+    "libfixedtime.so": {
+      "bytes": 16320,
+      "sha256": "58223216eed2a8da212e8f2658c3c5eaaf1cd0c8087c408e83da4c4ac705b90a"
+    }
+  }
+}

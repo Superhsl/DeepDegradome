@@ -1,0 +1,15 @@
+{
+  "DEVELOP/models/linker_design/pretrained_DEVELOP_model.pickle": "17355561a3c9ad9b92f5c0af673f0ae55549a29067f3506e15425063c5ad13d2",
+  "DEVELOP/models/linker_design/pretrained_DEVELOP_model_pharms.pickle": "10eb35c1c4a28c19a33de264a1c8c40f99af2b73f955bb0cf733382f079be1eb",
+  "DEVELOP/models/scaffold_elaboration/pretrained_DEVELOP_model.pickle": "0779ca4189bad9761069acbdeca758af2ac01b8e4a9e9490409d186aef6e6652",
+  "DeepPROTACs/model_1.pth": "c064ff0823d9330060ac239619a5397aaeb45a535ce44f74f6a9c8d7322b0adb",
+  "DeepPROTACs/model_10.pth": "298b9794365657d637d976db9a394a23db93ebc66134825b4fa5df1fef7e223b",
+  "DeepPROTACs/model_2.pth": "1782fc906e0febf3f381194d8fd88189f19ee6072bc935e4e0cbfbf39a2ab176",
+  "DeepPROTACs/model_3.pth": "9be637385878a11978dbedd2c125fdac5ff8108ad571901f6ef5677ff77c023b",
+  "DeepPROTACs/model_4.pth": "5a4f83e9de5bc5f936429e2e39879890ca21a500ea5a5b406e3700937683d1fa",
+  "DeepPROTACs/model_5.pth": "9cb3908d4409d08f70c8009b88ced2812fbb491719eef5b329c6d9112c2e3ce8",
+  "DeepPROTACs/model_6.pth": "9c04352a975de442587e39ad992e0e8f1ed02a2c21398ca087341596fbe79402",
+  "DeepPROTACs/model_7.pth": "81b5aa56d2c88e37e2e3207ece1bf1502da33781c6d1f7562f559006934c0ee9",
+  "DeepPROTACs/model_8.pth": "2c07952548c435f67d784d35fbc1977a2522d7df60a049974d26fb32c62b6cb9",
+  "DeepPROTACs/model_9.pth": "24778a5308f19a1561c7286c0c33e5790c9551d04bb13406779cf8840ac45335"
+}

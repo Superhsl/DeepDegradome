@@ -1,0 +1,24 @@
+ARG BUILD_IMAGE=deepdegradome-native-build:loong-20261019
+FROM ${BUILD_IMAGE}
+COPY install/ /opt/deepdegradome/
+COPY wrappers/babel_compat.py /opt/deepdegradome/bin/babel
+COPY wrappers/emolfrag_cli.py /opt/deepdegradome/bin/emolfrag
+RUN chmod 755 /opt/deepdegradome/bin/babel /opt/deepdegradome/bin/emolfrag
+ENV PATH=/opt/deepdegradome/bin:/opt/deepdegradome/kcombu/bin:/opt/deepdegradome/dock6/bin:/opt/deepdegradome/rosetta/main/source/bin:/home/py312/lib/python3.12/site-packages/openbabel/bin:/home/py312/bin:$PATH \
+    PYTHONPATH=/opt/deepdegradome/python/lib/python3.12/site-packages \
+    DEEPDEGRADOME_NATIVE_PREFIX=/opt/deepdegradome \
+    AutoFBDD_FOL=/source \
+    DeepDegradome_FOL=/source \
+    DEEPDEGRADOME_FOL=/source \
+    DEEPDEGRADOME_DEVICE=sdaa \
+    ROSETTA_FOL=/opt/deepdegradome/rosetta \
+    LD_LIBRARY_PATH=/opt/deepdegradome/rosetta/main/source/lib:$LD_LIBRARY_PATH \
+    PATCHDOCK=/source/PatchDock \
+    BABEL_LIBDIR=/home/py312/lib/python3.12/site-packages/openbabel/lib/openbabel/3.2.1 \
+    BABEL_DATADIR=/home/py312/lib/python3.12/site-packages/openbabel/share/openbabel/3.2.1 \
+    HOME=/tmp \
+    TORCH_SDAA_CONV_USE_FP32=0 \
+    OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 \
+    PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+WORKDIR /out
+ENTRYPOINT ["python3.12"]

@@ -1,0 +1,7 @@
+# Upstream Python sources include CRLF. Keep CR valid and detect actual whitespace errors.
+*.py whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+sdaa/patches/*.patch -whitespace
+sdaa/patches/*.patch -text -whitespace
+sdaa/scripts/final_validation/fixed-inputs/** -text -whitespace
+sdaa/vendor/licenses/** -text -whitespace
+sdaa/compat/legacy_molstandardize/** -text -whitespace

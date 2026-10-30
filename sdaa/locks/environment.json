@@ -1,0 +1,22 @@
+{
+  "architecture": "loongarch64",
+  "python": "3.12",
+  "torch": "2.12",
+  "torch_sdaa": "3.2.1",
+  "base_image_tag": "lasermpnn-sdaa321-loong:torch2.12.0-sdaa3.2.1-py312",
+  "base_image_id": "sha256:3e425da47a74a03b589f8e1c18a67dcb90c8bcbde977cc1df09fa01209b7a524",
+  "validated_runtime_image_id": "sha256:e7492c8146dd2012199b4e99d8c27ed0c03fea934feeef6f1c1caa45c1aca4f3",
+  "image_lock_kind": "Local Docker image IDs; not registry RepoDigests.",
+  "sdaa_smi": "/opt/tecoai/bin/teco-smi",
+  "default_conv_fp32": 0,
+  "runtime_user": "host UID:GID",
+  "mounts": "source and frozen inputs read-only; fresh outputs writable",
+  "previous_runtime_image_id": "sha256:826ba47fb841c22b40030cbc52fcf377e9d4b08b5c664f5b855617dfc8ae2035",
+  "chimera_determinism_policy": "chemical-order-am1-diag3-v1",
+  "chimera_determinism_patch_sha256": "1ac19167854bec25912d9eb3576af97113e57829228d0cdc1dda1c9b0a56d809",
+  "rosetta_zero_chi": {
+    "tolerance_degrees": 1e-10,
+    "scope": "non-Pro statistical chi bin only",
+    "patch_sha256": "6c2d8c28261632686a627df624c94c7c0f5152178f9593cbfc618f2b81347e19"
+  }
+}

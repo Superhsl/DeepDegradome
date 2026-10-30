@@ -1,0 +1,510 @@
+--- a/AddH/__init__.py
++++ b/AddH/__init__.py
+@@ -1,3 +1,10 @@
++
++def _stable_chemical_atom_key(atom):
++    res = atom.residue
++    mol = atom.molecule
++    return (mol.id, mol.subid, res.id.chainId, res.id.position,
++            res.id.insertionCode, atom.name, atom.altLoc)
++
+ # --- UCSF Chimera Copyright ---
+ # Copyright (c) 2000 Regents of the University of California.
+ # All rights reserved.  This software provided pursuant to a
+@@ -163,7 +170,7 @@
+ 			n = nter.atomsMap["N"][0]
+ 		except KeyError:
+ 			continue
+-		if not (n.residue.type == "PRO" and n.primaryNeighbors() >= 2):
++		if not (n.residue.type == "PRO" and sorted(n.primaryNeighbors(), key=_stable_chemical_atom_key) >= 2):
+ 			n.idatmType = "N3+"
+ 
+ 	coordinations = {}
+@@ -195,7 +202,7 @@
+ 				# sulfonamide nitrogens coordinating a metal
+ 				# get an additional hydrogen stripped
+ 				if coordinations.get(atom, []) and atom.element.name == "N":
+-					pns = atom.primaryNeighbors()
++					pns = sorted(atom.primaryNeighbors(), key=_stable_chemical_atom_key)
+ 					if "Son" in [pn.idatmType for pn in pns]:
+ 						from copy import copy
+ 						ti = copy(typeInfo[atom.idatmType])
+@@ -229,7 +236,7 @@
+ 		bondingInfo = typeInfo4Atom[atom]
+ 		totalHydrogens = bondingInfo.substituents - len(
+ 							atom.primaryBonds())
+-		for bonded in atom.primaryNeighbors():
++		for bonded in sorted(atom.primaryNeighbors(), key=_stable_chemical_atom_key):
+ 			if bonded.element.number == 1:
+ 				totalHydrogens = totalHydrogens + 1
+ 		hydrogenTotals[atom] = totalHydrogens
+@@ -392,14 +399,14 @@
+ 		deprotCheck = ones + twos
+ 	canProt = True
+ 	for oxy in protCheck:
+-		if len(oxy.primaryNeighbors()) != 1:
++		if len(sorted(oxy.primaryNeighbors(), key=_stable_chemical_atom_key)) != 1:
+ 			canProt = False
+ 			break
+ 	if not canProt:
+ 		return False
+ 	canDeprot = True
+ 	for oxy in deprotCheck:
+-		if len(oxy.primaryNeighbors()) != 1:
++		if len(sorted(oxy.primaryNeighbors(), key=_stable_chemical_atom_key)) != 1:
+ 			canDeprot = False
+ 			break
+ 	if not canDeprot:
+@@ -425,16 +432,16 @@
+ 		return False
+ 	protOkay = True
+ 	for nz in nzs:
+-		if len([nb for nb in nz.primaryNeighbors()
++		if len([nb for nb in sorted(nz.primaryNeighbors(), key=_stable_chemical_atom_key)
+ 					if nb.element.number > 1]) != 1:
+ 			protOkay = False
+ 			break
+ 		if protonation == "LYS":
+-			if len(nz.primaryNeighbors()) > 3:
++			if len(sorted(nz.primaryNeighbors(), key=_stable_chemical_atom_key)) > 3:
+ 				protOkay = False
+ 				break
+ 		else:
+-			if len(nz.primaryNeighbors()) > 2:
++			if len(sorted(nz.primaryNeighbors(), key=_stable_chemical_atom_key)) > 2:
+ 				protOkay = False
+ 				break
+ 	return protOkay
+@@ -448,11 +455,11 @@
+ 		return False
+ 	protOkay = True
+ 	for sg in sgs:
+-		if len([nb for nb in sg.primaryNeighbors()
++		if len([nb for nb in sorted(sg.primaryNeighbors(), key=_stable_chemical_atom_key)
+ 					if nb.element.number > 1]) != 1:
+ 			protOkay = False
+ 			break
+-		if len(sg.primaryNeighbors()) > 1:
++		if len(sorted(sg.primaryNeighbors(), key=_stable_chemical_atom_key)) > 1:
+ 			protOkay = False
+ 			break
+ 	return protOkay
+@@ -468,7 +475,7 @@
+ 		except KeyError:
+ 			continue
+ 		dihed = None
+-		for cnb in c.primaryNeighbors():
++		for cnb in sorted(c.primaryNeighbors(), key=_stable_chemical_atom_key):
+ 			if cnb.name == "N":
+ 				pn = cnb
+ 				break
+@@ -486,7 +493,7 @@
+ 			except KeyError:
+ 				dihed = 0.0
+ 		addNH = True
+-		for nb in n.primaryNeighbors():
++		for nb in sorted(n.primaryNeighbors(), key=_stable_chemical_atom_key):
+ 			if nb.element.number == 1:
+ 				if nb.name == "H":
+ 					addNH = False
+@@ -513,7 +520,7 @@
+ 			c = fc.atomsMap["C"][0]
+ 		except KeyError:
+ 			continue
+-		for nb in c.primaryNeighbors():
++		for nb in sorted(c.primaryNeighbors(), key=_stable_chemical_atom_key):
+ 			if nb.element.number == 1:
+ 				replyobj.info("Removing spurious proton from"
+ 					" 'C' of %s\n" % str(fc))
+@@ -524,7 +531,7 @@
+ 		except KeyError:
+ 			continue
+ 		addAtom("H", Element(1), fc, hn.coord(),
+-			serialNumber=hn.serialNumber, bondedTo=hn.neighbors[0])
++			serialNumber=hn.serialNumber, bondedTo=sorted(hn.neighbors, key=_stable_chemical_atom_key)[0])
+ 		fc.molecule.deleteAtom(hn)
+ 
+ 
+@@ -591,8 +598,8 @@
+ 				# use :1 instead of 0 in case atom name is empty
+ 				if not atom.name[:1].isalpha():
+ 					schemas[molecule] = 2 # PDB version 2
+-				if len(atom.neighbors) == 1:
+-					nb = atom.neighbors[0]
++				if len(sorted(atom.neighbors, key=_stable_chemical_atom_key)) == 1:
++					nb = sorted(atom.neighbors, key=_stable_chemical_atom_key)[0]
+ 					if nb.name == 'N' and atom.name == 'H':
+ 						# this 'exception' occurs in standard amino
+ 						# acids so, don't allow it to force prepend...
+@@ -744,7 +751,7 @@
+ 			Hname += "'"
+ 	elif totalHydrogens > 1 or _sameName(resAtoms, atom.altLoc, Hname):
+ 		if totalHydrogens == 2 and len([nb for nb in
+-						atom.primaryNeighbors()
++						sorted(atom.primaryNeighbors(), key=_stable_chemical_atom_key)
+ 						if nb.element.number > 1]) == 2:
+ 			Hnum += 1
+ 		while _sameName(resAtoms, atom.altLoc, "%s%d" % (Hname, Hnum)):
+@@ -837,6 +844,7 @@
+ 
+ def findNearest(pos, atom, exclude, checkDist, avoidMetalInfo=None):
+ 	nearby = searchTree.searchTree(pos.data(), checkDist)
++	nearby = sorted(nearby, key=_stable_chemical_atom_key)
+ 	nearPos = n = nearAtom = None
+ 	# Points don't have a hash function (yet) so use their data()
+ 	excludePos = set([ex.xformCoord().data() for ex in exclude])
+@@ -852,7 +860,7 @@
+ 			# (1) unopen models only "clash" with themselves
+ 			# (2) don't consider atoms in sibling submodels
+ 			continue
+-		if nb not in atom.primaryNeighbors():
++		if nb not in sorted(atom.primaryNeighbors(), key=_stable_chemical_atom_key):
+ 			if avoidMetalInfo and nb.element in metals \
+ 			and nb.molecule == atom.molecule:
+ 				if metalClash(nb.xformCoord(), pos,
+@@ -864,7 +872,7 @@
+ 				n = d
+ 				nearAtom = nb
+ 		# only heavy atoms in tree...
+-		for nbb in nb.primaryNeighbors():
++		for nbb in sorted(nb.primaryNeighbors(), key=_stable_chemical_atom_key):
+ 			if nbb.element.number != 1:
+ 				continue
+ 			if nbb.xformCoord().data() in excludePos:
+@@ -893,6 +901,7 @@
+ 	checkDist += radius
+ 
+ 	nearby = searchTree.searchTree(center.data(), checkDist)
++	nearby = sorted(nearby, key=_stable_chemical_atom_key)
+ 	nearPos = n = nearAtom = None
+ 	for nb in nearby:
+ 		if nb.xformCoord() in [atPos, nPos]:
+@@ -905,7 +914,7 @@
+ 			continue
+ 		candidates = [(nb, vdwRadius(nb))]
+ 		# only heavy atoms in tree...
+-		for nbb in nb.primaryNeighbors():
++		for nbb in sorted(nb.primaryNeighbors(), key=_stable_chemical_atom_key):
+ 			if nbb.element.number != 1:
+ 				continue
+ 			if nbb == neighbor:
+@@ -1024,7 +1033,7 @@
+ 	elif element == "O":
+ 		# can't rely on water being in chain "water" anymore...
+ 		if len(heavy.bonds) == 0 or (len(heavy.bonds) == 2
+-		and len([nb for nb in heavy.neighbors if nb.element.number > 1]) == 0):
++		and len([nb for nb in sorted(heavy.neighbors, key=_stable_chemical_atom_key) if nb.element.number > 1]) == 0):
+ 			return 0.9572
+ 		return 0.96
+ 	elif element == "S":
+@@ -1089,7 +1098,7 @@
+ 		except KeyError:
+ 			realN.append(nTerm)
+ 		else:
+-			if len(n.neighbors) == 2 and 'H' in [nb.name for nb in n.neighbors]:
++			if len(sorted(n.neighbors, key=_stable_chemical_atom_key)) == 2 and 'H' in [nb.name for nb in sorted(n.neighbors, key=_stable_chemical_atom_key)]:
+ 				fakeN.append(nTerm)
+ 			else:
+ 				realN.append(nTerm)
+@@ -1102,7 +1111,7 @@
+ 		except KeyError:
+ 			realC.append(cTerm)
+ 		else:
+-			if len(c.neighbors) == 2 and 'O' in [nb.name for nb in c.neighbors]:
++			if len(sorted(c.neighbors, key=_stable_chemical_atom_key)) == 2 and 'O' in [nb.name for nb in sorted(c.neighbors, key=_stable_chemical_atom_key)]:
+ 				fakeC.append(cTerm)
+ 			else:
+ 				realC.append(cTerm)
+@@ -1159,7 +1168,7 @@
+ 		if len(c.primaryBonds()) != 2:
+ 			return
+ 		loc = bondPositions(c.coord(), 3, 1.229,
+-				[n.coord() for n in c.primaryNeighbors()])[0]
++				[n.coord() for n in sorted(c.primaryNeighbors(), key=_stable_chemical_atom_key)])[0]
+ 		oxt = addAtom("OXT", chimera.Element("O"), cter, loc,
+ 								bondedTo=c)
+ 	replyobj.info("Missing OXT added to C-terminal residue %s\n"
+--- a/AddH/hbond.py
++++ b/AddH/hbond.py
+@@ -1,3 +1,10 @@
++
++def _stable_chemical_atom_key(atom):
++    res = atom.residue
++    mol = atom.molecule
++    return (mol.id, mol.subid, res.id.chainId, res.id.position,
++            res.id.insertionCode, atom.name, atom.altLoc)
++
+ from chimera.bondGeom import tetrahedral, planar, linear, single, bondPositions
+ from chimera.idatm import *
+ import AddH
+@@ -88,7 +95,7 @@
+ 				else:
+ 					if idatmType[atom] == 'Npl' \
+ 					and idatmType[
+-					atom.primaryNeighbors()[0]] == 'Car':
++					sorted(atom.primaryNeighbors(), key=_stable_chemical_atom_key)[0]] == 'Car':
+ 						# primary aromatic amine
+ 						aroAmines[atom] = True
+ 					else:
+@@ -178,7 +185,7 @@
+ 			neighbors = []
+ 			neighborAtoms = []
+ 			altLocs = set()
+-			for n in atom.primaryNeighbors():
++			for n in sorted(atom.primaryNeighbors(), key=_stable_chemical_atom_key):
+ 				if n.altLoc:
+ 					altLocs.add(n.altLoc)
+ 				neighborAtoms.append(n)
+@@ -188,9 +195,9 @@
+ 			if needCoplanar:
+ 				for na in neighborAtoms:
+ 					if not atom.altLoc:
+-						grandNeighbors = na.primaryNeighbors()
++						grandNeighbors = sorted(na.primaryNeighbors(), key=_stable_chemical_atom_key)
+ 					else:
+-						grandNeighbors = [gnb for gnb in na.neighbors
++						grandNeighbors = [gnb for gnb in sorted(na.neighbors, key=_stable_chemical_atom_key)
+ 								if not gnb.altLoc or gnb.altLoc == atom.altLoc]
+ 					for nna in grandNeighbors:
+ 						if nna != atom:
+@@ -257,7 +264,10 @@
+ 		if a in acceptors:
+ 			sortableHbonds.append((d.xformCoord().sqdistance(
+ 					a.xformCoord()), True, (d, a)))
+-	sortableHbonds.sort()
++	# Explicit chemical identity resolves only exact distance/priority ties.
++	sortableHbonds.sort(key=lambda item: (item[0], item[1],
++		_stable_chemical_atom_key(item[2][0]),
++		_stable_chemical_atom_key(item[2][1])))
+ 	replyobj.status("Organizing h-bond info", blankAfter=0)
+ 	hbonds = {}
+ 	ambiguous = {}
+@@ -389,7 +399,7 @@
+ 			if a not in finished and _typeInfo(a).geometry == 4:
+ 				if d in finished:
+ 					checks = []
+-					for b in d.primaryNeighbors():
++					for b in sorted(d.primaryNeighbors(), key=_stable_chemical_atom_key):
+ 						if b.element.number == 1:
+ 							checks.append(b)
+ 				else:
+@@ -487,7 +497,7 @@
+ 			breakNring = True
+ 		breakAmbiguous = not processedOne
+ 	numFinished = 0
+-	for a in candidates.keys():
++	for a in sorted(candidates.keys(), key=_stable_chemical_atom_key):
+ 		if a in finished:
+ 			numFinished += 1
+ 	if debug:
+@@ -529,7 +539,7 @@
+ 			# and, if trigonal planar, no angle > 150
+ 			badAngle = False
+ 			checkPlanar = typeInfo4Atom[a].geometry == planar
+-			for bonded in a.primaryNeighbors():
++			for bonded in sorted(a.primaryNeighbors(), key=_stable_chemical_atom_key):
+ 				ang = chimera.angle(bonded.xformCoord(), atPos, target)
+ 				if ang < 90.0:
+ 					badAngle = True
+@@ -566,14 +576,14 @@
+ 				geom = 3
+ 				knowns = positions
+ 				coPlanar = []
+-				for bonded in a.primaryNeighbors():
+-					for b2 in bonded.primaryNeighbors():
++				for bonded in sorted(a.primaryNeighbors(), key=_stable_chemical_atom_key):
++					for b2 in sorted(bonded.primaryNeighbors(), key=_stable_chemical_atom_key):
+ 						if a == b2:
+ 							continue
+ 						coPlanar.append(b2.xformCoord())
+ 
+ 			newPos = bondPositions(atPos, geom, bondWithHLength(a, geom),
+-				[nb.xformCoord() for nb in a.primaryNeighbors()] + knowns,
++				[nb.xformCoord() for nb in sorted(a.primaryNeighbors(), key=_stable_chemical_atom_key)] + knowns,
+ 				coPlanar=coPlanar)
+ 			positions.extend(newPos)
+ 		_attachHydrogens(a, positions)
+@@ -590,7 +600,7 @@
+ 
+ 	replyobj.status("Using steric criteria to resolve partial h-bonders",
+ 								blankAfter=0)
+-	for a in candidates.keys():
++	for a in sorted(candidates.keys(), key=_stable_chemical_atom_key):
+ 		if a in finished:
+ 			continue
+ 		if a not in hbondInfo:
+@@ -630,7 +640,7 @@
+ 			if debug:
+ 				print "with no other positioning determinant"
+ 		bondedPos = []
+-		for bonded in a.primaryNeighbors():
++		for bonded in sorted(a.primaryNeighbors(), key=_stable_chemical_atom_key):
+ 			bondedPos.append(bonded.xformCoord())
+ 		positions = bondPositions(atPos, geom,
+ 			bondWithHLength(a, geom), bondedPos,
+@@ -676,7 +686,7 @@
+ 
+ 	replyobj.status("Adding hydrogens to non-h-bonding atoms",
+ 								blankAfter=0)
+-	for a in candidates.keys():
++	for a in sorted(candidates.keys(), key=_stable_chemical_atom_key):
+ 		if a in finished:
+ 			continue
+ 		if a in aroNs:
+@@ -687,7 +697,7 @@
+ 		bondingInfo = _typeInfo(a)
+ 		geom = bondingInfo.geometry
+ 
+-		primaryNeighbors = a.primaryNeighbors()
++		primaryNeighbors = sorted(a.primaryNeighbors(), key=_stable_chemical_atom_key)
+ 		numBonds = len(primaryNeighbors)
+ 		hydsToPosition = bondingInfo.substituents - numBonds
+ 		openings = geom - numBonds
+@@ -782,7 +792,7 @@
+ 		positions = []
+ 		for n in Npls:
+ 			bondedPos = []
+-			for bonded in n.primaryNeighbors():
++			for bonded in sorted(n.primaryNeighbors(), key=_stable_chemical_atom_key):
+ 				bondedPos.append(bonded.xformCoord())
+ 			positions.append(bondPositions(n.xformCoord(), planar,
+ 				bondWithHLength(n, planar), bondedPos)[0])
+@@ -837,13 +847,13 @@
+ 	toBonded = []
+ 	toCoplanar = []
+ 	toGeom = _typeInfo(toAtom).geometry
+-	for tb in toAtom.primaryNeighbors():
++	for tb in sorted(toAtom.primaryNeighbors(), key=_stable_chemical_atom_key):
+ 		toBonded.append(tb.xformCoord())
+ 		if tb.element.number == 1:
+ 			toHPos.append(tb.xformCoord())
+ 		if toGeom == planar:
+ 			toAtomLocs = toAtom.allLocations()
+-			for btb in tb.primaryNeighbors():
++			for btb in sorted(tb.primaryNeighbors(), key=_stable_chemical_atom_key):
+ 				if btb in toAtomLocs:
+ 					continue
+ 				toCoplanar.append(btb.xformCoord())
+@@ -989,12 +999,12 @@
+ 	bondedPos = []
+ 	testPositions = []
+ 	coplanar = []
+-	for bonded in atom.primaryNeighbors():
++	for bonded in sorted(atom.primaryNeighbors(), key=_stable_chemical_atom_key):
+ 		bondedPos.append(bonded.xformCoord())
+ 		if bonded.element.number == 1:
+ 			testPositions.append(bonded.xformCoord())
+ 		if geom == planar:
+-			for btb in bonded.primaryNeighbors():
++			for btb in sorted(bonded.primaryNeighbors(), key=_stable_chemical_atom_key):
+ 				if btb == atom:
+ 					continue
+ 				coplanar.append(btb.xformCoord())
+@@ -1111,7 +1121,7 @@
+ 		nearby = AddH.searchTree.searchTree(pos.data(), checkDist)
+ 		stericClash = False
+ 		okay = set([atom, other])
+-		okay.update(atom.primaryNeighbors())
++		okay.update(sorted(atom.primaryNeighbors(), key=_stable_chemical_atom_key))
+ 		for nb in nearby:
+ 			if nb in okay:
+ 				continue
+@@ -1216,12 +1226,12 @@
+ 
+ def addAltlocHyds(atom, geom, bondLength, needCoplanar, problemAtoms):
+ 	altLocs = set()
+-	for n in atom.neighbors:
++	for n in sorted(atom.neighbors, key=_stable_chemical_atom_key):
+ 		if n.altLoc:
+ 			altLocs.add(n.altLoc)
+ 	if needCoplanar:
+-		for na in atom.neighbors:
+-			for nna in na.neighbors:
++		for na in sorted(atom.neighbors, key=_stable_chemical_atom_key):
++			for nna in sorted(na.neighbors, key=_stable_chemical_atom_key):
+ 				if nna != atom:
+ 					if nna.altLoc:
+ 						altLocs.add(nna.altLoc)
+@@ -1230,7 +1240,7 @@
+ 		neighborAtoms = []
+ 		numOcc = 0
+ 		totOcc = 0.0
+-		for n in atom.neighbors:
++		for n in sorted(atom.neighbors, key=_stable_chemical_atom_key):
+ 			if n.altLoc:
+ 				if n.altLoc != altLoc:
+ 					continue
+@@ -1242,7 +1252,7 @@
+ 		coplanar = []
+ 		if needCoplanar:
+ 			for na in neighborAtoms:
+-				for nna in na.neighbors:
++				for nna in sorted(na.neighbors, key=_stable_chemical_atom_key):
+ 					if nna != atom:
+ 						if nna.altLoc:
+ 							if nna.altLoc != altLoc:
+@@ -1344,7 +1354,7 @@
+ 			donorPos = donor.xformCoord()
+ 			acceptorPos = acceptor.xformCoord()
+ 			attached = [
+-				donor.primaryNeighbors()[0].xformCoord()]
++				sorted(donor.primaryNeighbors(), key=_stable_chemical_atom_key)[0].xformCoord()]
+ 			planars = bondPositions(donorPos, 3, N_H, attached,
+ 							toward=toward)
+ 			planarDist = None
+@@ -1375,7 +1385,7 @@
+ 			# one proton attached
+ 			donorPos = donor.xformCoord()
+ 			acceptorPos = acceptor.xformCoord()
+-			attached = [acceptor.primaryNeighbors()[0].xformCoord()]
++			attached = [sorted(acceptor.primaryNeighbors(), key=_stable_chemical_atom_key)[0].xformCoord()]
+ 			planars = bondPositions(acceptorPos, 3, N_H, attached,
+ 							toward=toward)
+ 			planarDist = None
+@@ -1406,7 +1416,7 @@
+ 	"""Check if tet can still work"""
+ 	tetPos = tet.xformCoord()
+ 	partnerPos = partner.xformCoord()
+-	bonded = tet.primaryNeighbors()
++	bonded = sorted(tet.primaryNeighbors(), key=_stable_chemical_atom_key)
+ 	tetInfo = hbondInfo.get(tet, [])
+ 	towards = []
+ 	# if there is a real bond to the tet, we want to check the
+--- a/AddCharge/__init__.py
++++ b/AddCharge/__init__.py
+@@ -1,3 +1,19 @@
++
++def _stable_amber_bond_records(path):
++    text = open(path).read()
++    prefix, section = text.split('@<TRIPOS>BOND\n', 1)
++    bonds, sep, rest = section.partition('@<TRIPOS>')
++    rows = [line.split() for line in bonds.splitlines() if line.strip()]
++    assert all(len(row) == 4 for row in rows)
++    edges = sorted((min(int(r[1]), int(r[2])),
++                    max(int(r[1]), int(r[2])), r[3]) for r in rows)
++    ordered = ''.join('%6d %5d %5d %s\n' % (i, x, y, kind)
++                      for i, (x, y, kind) in enumerate(edges, 1))
++    output = prefix + '@<TRIPOS>BOND\n' + ordered + sep + rest
++    # Atom rows and the complete molecular graph are preserved.
++    assert output.split('@<TRIPOS>BOND\n', 1)[0] == prefix
++    open(path, 'w').write(output)
++
+ import chimera
+ from chimera import replyobj
+ 
+@@ -603,13 +619,14 @@
+ 	from WriteMol2 import writeMol2
+ 	anteIn = os.path.join(tempDir, "ante.in.mol2")
+ 	writeMol2([nm], anteIn, status=status, temporary=True)
++	_stable_amber_bond_records(anteIn)
+ 
+ 	from AmberInfo import amberHome, amberBin
+ 	anteOut = os.path.join(tempDir, "ante.out.mol2")
+ 	command = [os.path.join(amberBin, "antechamber")]
+ 	if method.lower().startswith("am1"):
+ 		mth = "bcc"
+-		command.extend(["-ek", "qm_theory='AM1',"])
++		command.extend(["-ek", "qm_theory='AM1',diag_routine=3,"])
+ 	elif method.lower().startswith("gas"):
+ 		mth = "gas"
+ 	else:

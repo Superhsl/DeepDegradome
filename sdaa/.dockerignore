@@ -1,0 +1,6 @@
+.local
+outputs
+cache
+dist
+scripts/full_comparison/fixtures
+__pycache__
