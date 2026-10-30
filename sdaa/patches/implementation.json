@@ -1,0 +1,11 @@
+{
+  "upstream_base": "8b77f9897258064ef1d9a5ac4a42a547fb3eacea",
+  "implementation_commit": "0c44db4d54293138c765572936b498ea8be7a786",
+  "implementation_tree": "86d57a4625479e5bd0b39fd03633aa48807b04ce",
+  "patch": "implementation.patch",
+  "patch_sha256": "4d25c7be3b5be6bb2dbe61d985e8e52feb7ce20a3b32dd149ad629113c8578dd",
+  "applies_to_base": true,
+  "reconstructed_tree_matches": true,
+  "includes_archive_commit": false,
+  "validation_scope": "Exact Git tree restoration; no model rerun"
+}
